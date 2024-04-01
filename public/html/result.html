@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Cricket Careers</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <style>
+      .container {
+      display: flex;
+      justify-content: space-between;
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #01d4bb;
+        border-radius: 10px;
+    }
+    .left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .right {
+      flex: 1;
+      padding-left: 20px;
+      margin-left: -15rem;
+      background-color: #00695c;
+      color: white;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+      width: 10rem;
+      height: 10rem;
+    }
+    .user-details {
+      margin-bottom: 10px;
+    }
+    .career-details{
+        margin-top: 10px; 
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container1">
+      <h1><b>CRICKET CAREERS WEBSITE</b></h1>
+    </div>
+    <div class="container">
+        <div class="left">
+            <img src="https://static.cricbuzz.com/a/img/v1/152x152/i1/c332891/virat-kohli.jpg" alt="User Image">
+            <div class="user-details">
+                <strong>Name:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Date of Birth:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Photo URL:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Birth Place:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Number of Matches:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Score:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Fifties:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Centuries:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Wickets:</strong><span>John Doe</span>
+            </div>
+            <div class="user-details">
+                <strong>Average:</strong><span>John Doe</span>
+            </div>
+        </div>
+        <div class="right">
+            <div class="career-details">
+                <strong>Career Info:</strong><span>John Doe</span>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        axios
+          .get("http://localhost:4000/careers")
+          .then((response) => {
+            for (let i = 0; i < response.data.length; i++) {
+              console.log(response.data);
+            }
+          })
+          .catch((err) => console.log(err));
+      });
+
+      itemList.addEventListener("click", editItem);
+      function editItem(e) {
+        if (e.target.classList.contains("edit")) {
+          if (confirm('Click on "OK" to Edit Item')) {
+            itemList.removeChild(e.target.parentElement);
+            let detailsArr = e.target.parentElement.textContent.split("-");
+            let expamtField = document.getElementById("expenseamt");
+            let desField = document.getElementById("description");
+            expamtField.value = detailsArr[0];
+            desField.value = detailsArr[1];
+            let elementToEdit =
+              e.target.parentElement.textContent.split("-")[1];
+            axios.get("http://localhost:4000/expenses").then((response) => {
+              for (let i = 0; i < response.data.length; i++) {
+                if (response.data[i].description === elementToEdit) {
+                  let editedUser = response.data[i].description;
+                  axios
+                    .delete(
+                      "http://localhost:4000/delete-expense/" +
+                        response.data[i].id
+                    )
+                    .then((response) =>
+                      console.log(
+                        editedUser,
+                        "has been removed. Please re-submit the form to update the user details"
+                      )
+                    )
+                    .catch((err) => console.log(err));
+                }
+              }
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
