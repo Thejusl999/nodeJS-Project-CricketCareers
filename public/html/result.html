@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Cricket Careers</title>
+    <link rel="stylesheet" href="/css/result.css" />
+  </head>
+  <body>
+    <div class="container1">
+      <h1><b>CRICKET CAREERS WEBSITE</b></h1>
+      <div class="editDiv">
+        <button class="btn1" onclick="edit()">Edit Player</button>
+      </div>
+    </div>
+    <div class="container">
+      <div class="left">
+        <img id="image" src="" alt="" />
+        <div class="user-details" id="name">
+          <strong>Name:</strong><span></span>
+        </div>
+        <div class="user-details" id="birthday">
+          <strong>Date of Birth:</strong><span></span>
+        </div>
+        <div class="user-details" id="birthplace">
+          <strong>Birth Place:</strong><span></span>
+        </div>
+        <div class="user-details" id="matches">
+          <strong>Number of Matches:</strong><span></span>
+        </div>
+        <div class="user-details" id="score">
+          <strong>Score:</strong><span></span>
+        </div>
+        <div class="user-details" id="fifties">
+          <strong>Fifties:</strong><span></span>
+        </div>
+        <div class="user-details" id="centuries">
+          <strong>Centuries:</strong><span></span>
+        </div>
+        <div class="user-details" id="wickets">
+          <strong>Wickets:</strong><span></span>
+        </div>
+        <div class="user-details" id="average">
+          <strong>Average:</strong><span></span>
+        </div>
+      </div>
+      <div class="right">
+        <div class="career-details" id="career">
+          <strong>Career Info:</strong><span></span>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+      var details;
+      const searchPlayerId = window.location.href.substring(35);
+      if(document.getElementById("name").querySelector("span").textContent.length===undefined){
+        window.location.href="http://localhost:4000/";
+      }
+      axios
+        .post("http://localhost:4000/getPlayerById", { searchPlayerId })
+        .then((response) => {
+          details = { ...response.data[0] };
+          document.getElementById("name").querySelector("span").textContent =
+            details.name;
+          document
+            .getElementById("birthday")
+            .querySelector("span").textContent = new Date(
+            details.birthday
+          ).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          document.getElementById("image").src = details.url;
+          document.getElementById("image").alt = details.name;
+          document
+            .getElementById("birthplace")
+            .querySelector("span").textContent = details.birthplace;
+          document.getElementById("matches").querySelector("span").textContent =
+            details.matches;
+          document.getElementById("score").querySelector("span").textContent =
+            details.score;
+          document.getElementById("fifties").querySelector("span").textContent =
+            details.fifties;
+          document
+            .getElementById("centuries")
+            .querySelector("span").textContent = details.centuries;
+          document.getElementById("wickets").querySelector("span").textContent =
+            details.wickets;
+          document.getElementById("average").querySelector("span").textContent =
+            details.average;
+          document.getElementById("career").querySelector("span").textContent =
+            details.career;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      function edit() {
+        const searchPlayerName = document
+          .getElementById("name")
+          .querySelector("span").textContent;
+        axios
+          .post("http://localhost:4000/getPlayerByName", { searchPlayerName })
+          .then((response) => {
+            let oldData={...response.data[0]};
+            axios
+              .delete(
+                "http://localhost:4000/delete-player/" + response.data[0].id
+              )
+              .then((response) => {
+                localStorage.setItem('oldData',JSON.stringify(oldData));
+                window.location.href="http://localhost:4000/";
+              })
+              .catch((err) => console.log(err));
+          });
+      }
+    </script>
+  </body>
+</html>

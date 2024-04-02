@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Cricket Careers</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="container1">
+      <h1><b>CRICKET CAREERS WEBSITE</b></h1>
+      <div class="searchDiv">
+        <input
+          class="search-control"
+          type="text"
+          id="search"
+          placeholder="Search a Player"
+        />
+        <button class="btn1" onclick="search()">Search</button>
+      </div>
+    </div>
+    <div class="formDiv">
+      <form id="form" class="form">
+        <div class="form-control">
+          <label for="name"><h4>Name:</h4></label>
+          <input type="text" id="name" name="name" />
+        </div>
+        <div class="form-control">
+          <label for="date"><h4>Date of Birth:</h4></label>
+          <input type="date" id="date" name="date" />
+        </div>
+        <div class="form-control">
+          <label for="url"><h4>Photo URL:</h4></label>
+          <input type="url" id="url" name="url" />
+        </div>
+        <div class="form-control">
+          <label for="birthplace"><h4>Birth Place:</h4></label>
+          <input type="text" id="birthplace" name="birthplace" />
+        </div>
+        <div class="form-control">
+          <label for="career"><h4>Career Info:</h4></label>
+          <textarea id="career" name="career"></textarea>
+        </div>
+        <div class="form-control">
+          <label for="matches"><h4>Number of Matches:</h4></label>
+          <input type="number" id="matches" name="matches" />
+        </div>
+        <div class="form-control">
+          <label for="score"><h4>Score:</h4></label>
+          <input type="number" id="score" name="score" />
+        </div>
+        <div class="form-control">
+          <label for="fifties"><h4>Fifties:</h4></label>
+          <input type="number" id="fifties" name="fifties" />
+        </div>
+        <div class="form-control">
+          <label for="centuries"><h4>Centuries:</h4></label>
+          <input type="number" id="centuries" name="centuries" />
+        </div>
+        <div class="form-control">
+          <label for="wickets"><h4>Wickets:</h4></label>
+          <input type="number" id="wickets" name="wickets" />
+        </div>
+        <div class="form-control">
+          <label for="average"><h4>Average:</h4></label>
+          <input type="number" id="average" name="average" />
+        </div>
+        <div class="btnDiv">
+          <button class="btn" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+      const form = document.querySelector("#form");
+      const nameInp = document.querySelector("#name");
+      const birthdayInp = document.querySelector("#date");
+      const urlInp = document.querySelector("#url");
+      const birthplaceInp = document.querySelector("#birthplace");
+      const careerInp = document.querySelector("#career");
+      const matchesInp = document.querySelector("#matches");
+      const scoreInp = document.querySelector("#score");
+      const fiftiesInp = document.querySelector("#fifties");
+      const centuriesInp = document.querySelector("#centuries");
+      const wicketsInp = document.querySelector("#wickets");
+      const averageInp = document.querySelector("#average");
+      form.addEventListener("submit", addCricketer);
+      function addCricketer(e) {
+        e.preventDefault();
+        if (
+          nameInp.value === "" ||
+          birthdayInp.value === "" ||
+          urlInp.value === "" ||
+          birthplaceInp.value === "" ||
+          careerInp.value === "" ||
+          matchesInp.value === "" ||
+          scoreInp.value === "" ||
+          fiftiesInp.value === "" ||
+          centuriesInp.value === "" ||
+          wicketsInp.value === "" ||
+          averageInp.value === ""
+        ) {
+          alert("All inputs are required!");
+        } else {
+          let name = nameInp.value;
+          let birthday = birthdayInp.value;
+          let url = urlInp.value;
+          let birthplace = birthplaceInp.value;
+          let career = careerInp.value;
+          let matches = matchesInp.value;
+          let score = scoreInp.value;
+          let fifties = fiftiesInp.value;
+          let centuries = centuriesInp.value;
+          let wickets = wicketsInp.value;
+          let average = averageInp.value;
+          let obj = {
+            name,
+            birthday,
+            url,
+            birthplace,
+            career,
+            matches,
+            score,
+            fifties,
+            centuries,
+            wickets,
+            average,
+          };
+          axios
+            .post("http://localhost:4000/add-player", obj)
+            .then((response) => {
+              alert(`Player ${name} Added!`);
+            })
+            .catch((err) => console.log(err));
+          nameInp.value = "";
+          birthdayInp.value = "";
+          urlInp.value = "";
+          birthplaceInp.value = "";
+          careerInp.value = "";
+          matchesInp.value = "";
+          scoreInp.value = "";
+          fiftiesInp.value = "";
+          centuriesInp.value = "";
+          wicketsInp.value = "";
+          averageInp.value = "";
+        }
+      }
+
+      function search() {
+        const searchPlayerName = document.querySelector("#search").value;
+        axios
+          .post("http://localhost:4000/getPlayerByName", { searchPlayerName })
+          .then((response) => {
+            window.location.href = `http://localhost:4000/searchPlayer/${response.data[0].id}`;
+          })
+          .catch((err) => {
+            console.log(err);
+            alert("Player not found!");
+          });
+      }
+
+      window.addEventListener("DOMContentLoaded", (event) => {
+        const data = JSON.parse(localStorage.getItem("oldData"));
+        localStorage.removeItem("oldData");
+
+        if (data) {
+          const playerForm = document.getElementById("form");
+          playerForm.elements["name"].value = data.name;
+
+          const dateString = data.birthday;
+          const date = new Date(dateString);
+          const day = String(date.getDate()).padStart(2, "0");
+          const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed, so add 1
+          const year = String(date.getFullYear());
+          const formattedDate = year + "-" + month + "-" + day;
+          playerForm.elements["date"].value = formattedDate;
+
+          playerForm.elements["url"].value = data.url;
+          playerForm.elements["birthplace"].value = data.birthplace;
+          playerForm.elements["career"].value = data.career;
+          playerForm.elements["matches"].value = data.matches;
+          playerForm.elements["score"].value = data.score;
+          playerForm.elements["fifties"].value = data.fifties;
+          playerForm.elements["centuries"].value = data.centuries;
+          playerForm.elements["wickets"].value = data.wickets;
+          playerForm.elements["average"].value = data.average;
+        }
+      });
+    </script>
+  </body>
+</html>
